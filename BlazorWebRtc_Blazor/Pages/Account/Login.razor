@@ -1,0 +1,108 @@
+﻿@page "/login"
+@using BlazorWebRtc_Blazor.Models.Request
+@using BlazorWebRtc_Blazor.Services.Abstract
+@using Microsoft.AspNetCore.Components.Forms
+@inject IAccountService accountService
+@inject NavigationManager navigationManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+            .login-container h2 {
+                text-align: center;
+                margin-bottom: 1.5rem;
+                color: #007bff;
+            }
+
+            .login-container input {
+                width: 100%;
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                font-size: 1rem;
+            }
+
+            .login-container button {
+                width: 100%;
+                padding: 0.75rem;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 1rem;
+                cursor: pointer;
+            }
+
+                .login-container button:hover {
+                    background-color: #0056b3;
+                }
+
+            .login-container p {
+                text-align: center;
+                margin-top: 1rem;
+            }
+
+                .login-container p a {
+                    color: #007bff;
+                    text-decoration: none;
+                }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <Microsoft.AspNetCore.Components.Forms.EditForm Model="@requestModel" OnValidSubmit="HandleLogin" >
+          <DataAnnotationsValidator/>
+          <ValidationSummary/>
+              <InputText @bind-Value="@requestModel.UserName" placeholder="UserName" class="form-control" ></InputText>
+            <ValidationMessage For="@(() => requestModel.UserName)"></ValidationMessage>
+
+            <InputText @bind-Value="@requestModel.Password" placeholder="Password" type="password" class="form-control"></InputText>
+            <ValidationMessage For="@(() => requestModel.Password)"></ValidationMessage>
+
+
+            <button type="submit" >Login</button>
+      </Microsoft.AspNetCore.Components.Forms.EditForm>
+       
+        <p>Don't have an account? <a href="/register">Register here</a></p>
+    </div>
+</body>
+</html>
+
+@code {
+    LoginCommand requestModel = new LoginCommand();
+
+    private async Task HandleLogin()
+    {
+        var response = await accountService.Login(requestModel);
+        if (response)
+        {
+            navigationManager.NavigateTo("/");
+        }
+    }
+
+
+
+}
